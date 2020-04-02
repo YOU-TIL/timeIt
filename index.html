@@ -34,6 +34,8 @@
 
         #clockTime {
             font-size: min(10vh, 10vw);
+            margin: 2px;
+            padding: 0;
             cursor: pointer;
             text-align: center;
         }
@@ -41,7 +43,6 @@
         #clockTimeInput {
             font-size: min(10vh, 10vw);
             border: none;
-            width: min(42vh, 42vw);
             width: min(42vh, 42vw);
             font-family: nanum;
             text-align: center;
@@ -52,22 +53,28 @@
             font-size: 30px;
             text-decoration: none;
             color: #5451c4;
+            font-size: min(5vh, 5vw);
         }
 
         #clockTimeForm {
             text-align: center;
+            margin: 0;
+            padding: 0;
         }
 
         #clockCancel {
-            position: fixed;
             width: 100%;
             text-align: center;
             bottom: 10px;
             cursor: pointer;
         }
+
+        #clockWorkForm {
+            text-align: center;
+        }
     </style>
 </head>
-<body oncontextmenu="return false;" onselectstart="return false;">
+<body oncontextmenu="return false;">
 <script>
     getVal = require('electron').remote.getGlobal;
     const {ipcRenderer} = require('electron');
@@ -153,8 +160,7 @@
             updateArc(150, 0, 359.99);
         }
         if (r) {
-            document.getElementById('clockTime').style.display = '';
-            document.getElementById('clockCancel').style.display = '';
+            document.getElementById('clockWorkForm').style.display = '';
             document.getElementById('clockTimeForm').style.display = 'none';
             if (getVal('isPaused').value) {
                 if (isMouseOver) document.getElementById('clockTime').innerText = "클릭해서\n계속";
@@ -164,8 +170,7 @@
                 else document.getElementById('clockTime').innerText = formatTime(Math.round(r * getVal('setTime').value));
             }
         } else {
-            document.getElementById('clockTime').style.display = 'none';
-            document.getElementById('clockCancel').style.display = 'none';
+            document.getElementById('clockWorkForm').style.display = 'none';
             document.getElementById('clockTimeForm').style.display = '';
         }
     }, 1);
@@ -185,12 +190,12 @@
         ipcRenderer.send('stopTimer', 'Timer');
     }
 
-    document.addEventListener('DOMContentLoaded', (event) => {
+    document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('clockTimeInput').value = "00:00:00";
-        document.getElementById('clockTimeInput').addEventListener('input', function (event) {
+        document.getElementById('clockTimeInput').addEventListener('input', () => {
             const rawStr = document.getElementById('clockTimeInput').value;
             const str = rawStr.replace(/\D+/g, '');
-            let resStr = "";
+            let resStr;
             let pos = getCaretPosition(document.getElementById('clockTimeInput'));
             let numPos = 0;
             for (i = 0; i < pos; i++) {
@@ -198,10 +203,10 @@
             }
             if (str.length > 6) {
                 resStr = str.substr(0, numPos - (str.length - 6) + 1) + str.substr(numPos + 1);
-                if (numPos % 2 == 0 && pos > 0) pos++;
+                if (numPos % 2 === 0 && pos > 0) pos++;
             } else if (str.length < 6) {
                 resStr = str.substr(0, numPos) + '0'.repeat(6 - str.length) + str.substr(numPos);
-                if (numPos % 2 == 0 && pos > 0) pos--;
+                if (numPos % 2 === 0 && pos > 0) pos--;
             } else resStr = str;
             resStr = resStr.substr(0, 6);
             resStr = resStr.substr(0, 2) + ':' + resStr.substr(2, 2) + ':' + resStr.substr(4, 2);
@@ -222,19 +227,41 @@
               0 0 0 0.4 0"/>
             <feBlend in="SourceGraphic" in2="colorOut" mode="normal"/>
         </filter>
+        <filter id="innershadow" x0="-50%" y0="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"></feGaussianBlur>
+            <feOffset dy="2" dx="3"></feOffset>
+            <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
+
+            <feFlood flood-color="#444444" flood-opacity="0.2"></feFlood>
+            <feComposite in2="shadowDiff" operator="in"></feComposite>
+            <feComposite in2="SourceGraphic" operator="over" result="firstfilter"></feComposite>
+
+
+            <feGaussianBlur in="firstfilter" stdDeviation="5" result="blur2"></feGaussianBlur>
+            <feOffset dy="-2" dx="-3"></feOffset>
+            <feComposite in2="firstfilter" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"></feComposite>
+
+            <feFlood flood-color="#444444" flood-opacity="0.2"></feFlood>
+            <feComposite in2="shadowDiff" operator="in"></feComposite>
+            <feComposite in2="firstfilter" operator="over"></feComposite>
+        </filter>
         <linearGradient id="MyGradient" gradientTransform="rotate(65)">
             <stop offset="5%" stop-color="#ffffff"/>
             <stop offset="95%" stop-color="#f2f6ff"/>
         </linearGradient>
     </defs>
     <path fill="none" stroke="#f2f6ff" stroke-width="40"
-          d="M 219.9997382006122 70.00000000022845 A 150 150 0 1 0 220 70"></path>
+          d="M 219.9997382006122 70.00000000022845 A 150 150 0 1 0 220 70" filter="url(#innershadow)"></path>
     <path id="leftTime" fill="none" stroke="#5451c4" stroke-width="40"></path>
     <circle cx="220" cy="70" id="timeSelector" r="30" fill="url(#MyGradient)" filter="url(#filter1)"/>
 </svg>
-<a id="clockCancel" onclick="cancelTimer();">정지</a>
 <div id="clock">
-    <p id="clockTime" onmouseover="mouseStatus(true);" onmouseout="mouseStatus(false);" onclick="togglePause();"></p>
+    <div id="clockWorkForm">
+        <p id="clockTime" onmouseover="mouseStatus(true);" onmouseout="mouseStatus(false);"
+           onclick="togglePause();"></p>
+        <div style="width:100%;height: 15px;"></div>
+        <a id="clockCancel" onclick="cancelTimer();">정지</a>
+    </div>
     <form id="clockTimeForm">
         <input type="text" id="clockTimeInput"><br>
         <div style="width:100%;height: 15px;"></div>

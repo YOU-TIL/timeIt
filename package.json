@@ -1,20 +1,45 @@
 {
   "name": "timer",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Timer for IASA",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "run" : "electron index.js"
+    "dist": "electron-builder",
+    "run": "electron index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/04SeoHyun/Timer.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Seo_Hyun <04seohyun@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/04SeoHyun/Timer/issues"
   },
-  "homepage": "https://github.com/04SeoHyun/Timer#readme"
+  "homepage": "https://github.com/04SeoHyun/Timer#readme",
+  "build": {
+    "productName": "Timer",
+    "appId": "iasa.null.timer",
+    "artifactName": "Timer.${ext}",
+    "directories": {
+      "output": "build"
+    },
+    "win": {
+      "extraFiles": [
+        "./logo.ico"
+      ],
+      "target": [
+        {
+          "target": "NSIS",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "./logo.ico"
+    },
+    "nsis": {
+      "createStartMenuShortcut": true
+    }
+  }
 }

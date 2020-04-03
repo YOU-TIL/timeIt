@@ -1,5 +1,7 @@
-const {app, BrowserWindow, Tray, ipcMain} = require('electron');
+const {app, BrowserWindow, Tray, ipcMain, nativeImage} = require('electron');
 let win = null, aWin = null, tray, decIntv, pauseStartTime, toR = 0, begin;
+
+const trayImage = nativeImage.createFromPath(`${__dirname}\\logo.ico`);
 
 global.r = {value: 0};
 global.setTime = {value: 0};
@@ -99,15 +101,15 @@ function firstRun() {
         //startTimer();
     }, 1000);
     if (!tray) {
-        tray = new Tray(`${__dirname}\\logo.ico`);
+        tray = new Tray(trayImage);
         tray.setToolTip('타이머가 실행 중입니다.');
         tray.on('click', createWindow);
     }
 }
 
 function closeApp() {
-    app.exit();
     tray.destroy();
+    app.exit();
 }
 
 app.on('ready', firstRun);

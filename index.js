@@ -1,7 +1,7 @@
 const {app, BrowserWindow, Tray, ipcMain, nativeImage} = require('electron');
 let win = null, aWin = null, tray, decIntv, pauseStartTime, toR = 0, begin;
 
-const trayImage = nativeImage.createFromPath(`${__dirname}\\logo.ico`);
+const trayImage = nativeImage.createFromPath(`${__dirname}\\..\\logo.ico`);
 
 global.r = {value: 0};
 global.setTime = {value: 0};
@@ -19,6 +19,11 @@ ipcMain.on('resumeTimer', (event, arg) => {
 ipcMain.on('stopTimer', (event, arg) => {
     stopTimer();
 });
+ipcMain.on('changeTime', (event, arg) => {
+    if (arg > 0) global.setTime.value += arg;
+    else begin += arg * 1000;
+    if (global.setTime.value <= 0) global.setTime.value = 0;
+});
 
 function createWindow() {
     if (win) return;
@@ -28,7 +33,7 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true
         },
-        icon: `${__dirname}\\logo.ico`
+        icon: `${__dirname}\\..\\logo.ico`
     });
     win.loadURL(`file://${__dirname}/index.html`);
     //win.webContents.openDevTools();
@@ -57,7 +62,7 @@ function resumeTimer() {
                 webPreferences: {
                     nodeIntegration: true
                 },
-                icon: `${__dirname}\\logo.ico`
+                icon: `${__dirname}\\..\\logo.ico`
             });
             aWin.loadURL(`file://${__dirname}/popup.html`);
             aWin.on('closed', () => {

@@ -136,3 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setCaretPosition(document.getElementById('clockTimeInput'), pos);
     });
 });
+
+function chgTime(time) {
+    ipcRenderer.send('changeTime', time);
+}

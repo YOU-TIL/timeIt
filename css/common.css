@@ -3,6 +3,10 @@
     src: url(../res/NSL.ttf);
 }
 
+* {
+    user-select: none;
+}
+
 html, body {
     width: 100vw;
     height: 100vh;
@@ -65,4 +69,41 @@ a {
 
 #clockWorkForm {
     text-align: center;
+}
+
+#leftControl {
+    float: left;
+    margin-top: 50vh;
+    transform: translateY(-50%);
+    width: 50px;
+}
+
+#leftControl > div {
+    border-radius: 0 100px 100px 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 130px;
+    height: 45px;
+    font-size: 40px;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+#rightControl {
+    float: right;
+    margin-right: 100px;
+    margin-top: 50vh;
+    transform: translateY(-50%);
+    width: 50px;
+}
+
+#rightControl > div {
+    border-radius: 100px 0 0 100px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 130px;
+    height: 45px;
+    font-size: 40px;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
